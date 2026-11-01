@@ -1,0 +1,24 @@
+name: test
+on: [push, pull_request]
+jobs:
+  neovim:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: [v0.10.4, v0.11.5]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Neovim
+        env:
+          NVIM_VERSION: ${{ matrix.version }}
+        run: |
+          curl -fsSL "https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-x86_64.tar.gz" -o /tmp/nvim.tar.gz
+          tar -xzf /tmp/nvim.tar.gz -C /tmp
+          echo /tmp/nvim-linux-x86_64/bin >> "$GITHUB_PATH"
+      - name: Lua workflow tests
+        run: nvim --headless -u NONE -l tests/run.lua
+      - name: lazy.nvim loading
+        run: |
+          git clone --depth 1 https://github.com/folke/lazy.nvim.git /tmp/lazy.nvim
+          LAZY_PATH=/tmp/lazy.nvim nvim --headless -u NONE -l tests/lazy.lua
+          WIZARD_TEST_EVENTS=1 LAZY_PATH=/tmp/lazy.nvim nvim --headless -u NONE -l tests/lazy.lua

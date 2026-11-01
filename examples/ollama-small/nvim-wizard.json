@@ -1,0 +1,18 @@
+{
+  "defaults": {
+    "api": "ollama",
+    "base_url": "http://ollama.workstation.local",
+    "request": {
+      "options": {
+        "num_ctx": 16384,
+        "temperature": 0
+      }
+    }
+  },
+  "presets": [
+    {
+      "name": "Qwen 3 · 0.6B",
+      "model": "qwen3:0.6b"
+    }
+  ]
+}

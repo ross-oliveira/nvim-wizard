@@ -1,0 +1,36 @@
+*wizard.txt*              Single-file edits with nvim-wizard
+
+SETUP                                                       *wizard-setup*
+Requires Neovim 0.10+ and curl. No Codex CLI is needed.
+Set main = 'wizard' for lazy.nvim and opts with defaults/presets.
+Each preset requires model and base_url (possibly inherited from defaults).
+api is 'ollama' (default), 'openai', or 'responses'. Optional request fields are
+sent directly to the chosen API. See README.md for Lua and project JSON examples.
+
+COMMANDS                                                    *wizard-commands*
+:WizardPrompt    Prompt for an edit or refine the latest proposal.
+:WizardModels    Select a model by number; initially the first is active.
+:WizardAccept    Save the editable proposal unless the source/disk changed.
+:WizardCancel    Discard or stop a running HTTP request.
+
+In normal file buffers Enter prompts and Shift-Enter selects a model. In the
+prompt Enter submits, Esc closes, and Shift-Enter adds a newline. In the review
+normal-mode Enter accepts, Esc discards, and ]c/[c navigate differences. Insert
+mode retains normal Enter/Esc behavior: Esc leaves insert mode first. While a
+request runs, normal-mode Esc in its source/review cancels it.
+
+Space w p remains the prompt/refine shortcut and Space w m selects models if
+your terminal cannot distinguish Shift-Enter. Space w a accepts, Space w x and q
+discard in the review. File-event lazy loading is shown in README.md.
+With 10+ presets, numbers are padded (01, 02, ..., 10).
+
+The left side is the original snapshot; the right side is editable. Repeated
+prompts operate on the latest proposal. Cancel preserves unsaved source changes.
+
+PRIVACY                                                     *wizard-privacy*
+Only a system instruction, basename, current file/proposal and your request are
+sent. No tools, other files, or agent instructions are included. The plugin has
+no telemetry or catalog sync. Provider logging is independent of the plugin.
+Project JSON chooses the endpoint, so use configuration you trust.
+
+vim:tw=78:ts=8:noet:ft=help:norl:
