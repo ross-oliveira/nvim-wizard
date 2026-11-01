@@ -2,6 +2,7 @@ local M = {}
 local api = vim.api
 local config = require('wizard.config')
 local bindings = require('wizard.keys')
+local ui = require('wizard.ui')
 local session, selector
 local function notify(msg, level) vim.notify('nvim-wizard: ' .. msg, level or vim.log.levels.INFO) end
 local function guard(fn)
@@ -172,6 +173,7 @@ function M.prompt()
   s.prompt_win = api.nvim_open_win(buf, true, { relative = 'editor', row = math.max(0, vim.o.lines - 6), col = 1,
     width = width, height = 3, style = 'minimal', border = 'rounded',
     title = ' Wizard · ' .. config.name(ctx.presets[ctx.index]) .. ' · Enter submit / Esc close ', title_pos = 'left' })
+  ui.transparent(s.prompt_win)
   vim.keymap.set({ 'i', 'n' }, '<Esc>', function()
     close_prompt(s)
     if not s.preview_buf then session = nil end
@@ -200,6 +202,7 @@ function M.models()
     width = width, height = math.min(#lines, math.max(1, vim.o.lines - 6)), style = 'minimal', border = 'rounded',
     title = ' Wizard presets · ' .. digits .. ' digit selection ' })
   local win = selector
+  ui.transparent(win)
   api.nvim_buf_set_lines(buf, 0, -1, false, lines)
   vim.bo[buf].modifiable = false
   local function choose(i)
@@ -221,6 +224,7 @@ function M.setup(opts)
   bindings.clear()
   config.setup(opts)
   api.nvim_create_autocmd('VimLeavePre', { group = lifecycle, callback = M.cancel })
+  api.nvim_create_autocmd('ColorScheme', { group = lifecycle, callback = ui.refresh })
   local function attach(buf)
     if not api.nvim_buf_is_valid(buf) then return end
     local eligible = vim.bo[buf].buftype == '' and vim.bo[buf].modifiable
